@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pour Dalal</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: linear-gradient(135deg, #0b3d2e 0%, #145c48 50%, #0b3d2e 100%);
+    padding: 20px;
+  }
+  .card {
+    background: #fffdf7;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    max-width: 480px;
+    width: 100%;
+    padding: 40px 30px;
+    text-align: center;
+    border: 3px solid #c9a24b;
+  }
+  h1 {
+    color: #0b3d2e;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  p.sub {
+    color: #6b6b6b;
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+  input[type="password"] {
+    width: 100%;
+    padding: 14px;
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 8px;
+    border: 2px solid #c9a24b;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    outline: none;
+  }
+  input[type="password"]:focus {
+    border-color: #0b3d2e;
+  }
+  button {
+    background: #0b3d2e;
+    color: #fffdf7;
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover {
+    background: #145c48;
+  }
+  #error {
+    color: #b33a3a;
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+  #message-container {
+    display: none;
+  }
+  #message-container .letter {
+    text-align: left;
+    white-space: pre-wrap;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #2b2b2b;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  #message-container h1 {
+    text-align: center;
+  }
+  .lock-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="lock-screen">
+  <div class="lock-icon">🔒</div>
+  <h1>Un message t'attend</h1>
+  <p class="sub">Entre le code secret à 4 chiffres pour l'ouvrir</p>
+  <input type="password" id="code" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••">
+  <br>
+  <button onclick="checkCode()">Ouvrir</button>
+  <div id="error"></div>
+</div>
+
+<div class="card" id="message-container">
+  <h1>Pour Dalal 🤍</h1>
+  <div class="letter">Salam 3aleykom Dalal,
+
+Je ne sais pas si c'est trop tard, trop tôt, ou si je devais plus jamais venir te parler. Mais je ressentais le besoin de tout donner une dernière fois pour nous, même si tu as décidé que c'était terminé.
+
+Je sais que j'ai été très problématique dans notre relation, surtout ces deux dernières années. Que ce soit par mes pensées, mes actes ou ma mentalité, je t'ai fait vivre des choses que tu ne méritais pas, et j'en suis sincèrement désolé.
+
+Depuis notre séparation, j'ai énormément pris de recul sur notre histoire, mais aussi sur moi même. Crois le ou pas, beaucoup de ces défauts qui ont tuer la relation petit à petit n'existent presque plus aujourd'hui. Ce changement, je ne l'ai pas fait uniquement pour toi, je l'ai aussi fait pour moi. Avec la mentalité que j'avais, je savais que je n'allais pas aller bien loin dans la vie la vérité.
+
+Je me rends compte aussi que mon discours sur le mariage n'était pas cohérent. Je disais vouloir me marier rapidement, mais je faisais absolument rien pour en être capable. Je comprends que t'as fini par ne plus me croire.
+
+C'est pour ça que, depuis que c'est terminé, j'ai enfin fait ce que j'aurais dû faire depuis longtemps. J'ai travaillé comme un acharné tout les jours, souvent deux taff par jour tout en suivant ma formation à coté. Al hamdoulillah, j'ai réussi mon permis camion et, incha Allah, à partir de septembre je commencerai à travailler comme chauffeur. Et avant tout ça j'ai surtout placer ma confiance en Allah et prier pour nous 2.
+
+J'ai aussi choisi de ne pas partir en vacances cet été, parce que j'ai voulu investir ce temps à construire mon avenir et à préparer les choses sérieusement. Ce n'est pas un sacrifice que je regrette, au contraire, c'était une décision que j'ai prise parce que mes priorités ont changé.
+
+Si je suis venu te parler aujourd'hui, ce n'est pas juste pour te parler de ce que j'ai accompli. C'est parce que je veux venir demander ta main Dalal.
+
+De mon coté j'ai déjà parler de la situation avec mes parents. Ils sont en Égypte la et reviennent demain, incha Allah. On est prêts à venir demander officiellement ta main dès que c'est possible pour vous.
+
+Mais est-ce que toi, tu serais prête à me redonner une chance ? À me refaire confiance et me laisser te prouver que le changement est réel ? Est ce que tu serais prête à reprendre cette histoire sur de nouvelles bases, cette fois dans le halal, sans se cacher de personne et sans répéter les erreurs du passé ?
+
+Si ta réponse est non, je la respecterai. Je voulais simplement que tu saches que malgré tout, mes intentions envers toi sont toujours restées les mêmes et sincères. Je t'ai toujours vue comme la femme avec qui je voulais construire ma vie, et aujourd'hui je fais les efforts pour devenir l'homme capable d'assumer cette responsabilité.
+
+Qu'Allah fasse ce qui est le meilleur pour nous deux.
+
+(Ps: Financièrement tqt pas j'ai mis de coté et je travail encore comme un fou)</div>
+</div>
+
+<script>
+const CORRECT_CODE = "1908";
+
+function checkCode() {
+  const input = document.getElementById('code').value.trim();
+  const error = document.getElementById('error');
+  if (input === CORRECT_CODE) {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('message-container').style.display = 'block';
+  } else {
+    error.textContent = "Code incorrect, réessaye.";
+    document.getElementById('code').value = "";
+  }
+}
+
+document.getElementById('code').addEventListener('keyup', function(e) {
+  if (e.key === 'Enter') checkCode();
+});
+</script>
+
+</body>
+</html>
