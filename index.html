@@ -240,8 +240,8 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
 
 <div class="card" id="chat-container">
   <h1 id="chat-title">Discussion</h1>
-  <p class="hint">Messagerie en temps réel avec Supabase.</p>
-  <div class="status-box" id="supabase-status">Version prête avec tes clés Supabase. Si le chat ne marche pas encore, vérifie surtout la table <code class="inline">private_messages</code>, Realtime et les policies SQL.</div>
+  <p class="hint">Messagerie avec Supabase.</p>
+  <div class="status-box" id="supabase-status">Connexion en cours...</div>
   <div id="chat-messages"></div>
   <div id="chat-input-area">
     <input type="text" id="message-input" placeholder="Écris ton message..." autocomplete="off">
@@ -258,6 +258,7 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
   let currentUser = null;
   let supabase = null;
   let realtimeChannel = null;
+  let pollingInterval = null;
 
   const SUPABASE_URL = 'https://bjlbmmzeglbhuhhihikq.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_TYAsY6Krtm83Qp8CnwAAbg_wjvyrBSu';
@@ -278,10 +279,10 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
   if (isSupabaseConfigured()) {
     try {
       supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      setStatus('Supabase connecté. Les messages peuvent se synchroniser en temps réel si la table et Realtime sont activés.');
+      setStatus('Supabase connecté. Le chat essaie le temps réel et se rafraîchit aussi automatiquement.');
     } catch (error) {
       console.error(error);
-      setStatus('Erreur Supabase : vérifie l’URL et la clé anonyme.', true);
+      setStatus('Erreur Supabase : vérifie l’URL et la clé publique.', true);
     }
   }
 
@@ -323,11 +324,19 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
     const chatError = document.getElementById('chat-error');
     chatError.textContent = '';
     if (!supabase) {
-      chatError.textContent = 'Supabase n’est pas encore configuré. Ajoute ton URL et ta clé anonyme.';
+      chatError.textContent = 'Supabase n’est pas configuré.';
       return;
     }
     await loadMessages();
     subscribeToMessages();
+    startPolling();
+  }
+
+  function startPolling() {
+    if (pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(() => {
+      loadMessages();
+    }, 3000);
   }
 
   async function loadMessages() {
@@ -339,7 +348,7 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
 
     if (error) {
       console.error(error);
-      chatError.textContent = 'Impossible de charger les messages. Vérifie la table private_messages.';
+      chatError.textContent = 'Impossible de charger les messages.';
       return;
     }
     renderMessages(data || []);
@@ -356,7 +365,9 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
       })
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          setStatus('Supabase connecté. Synchronisation en temps réel active.');
+          setStatus('Supabase connecté. Synchronisation en temps réel active (+ actualisation automatique toutes les 3s).');
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          setStatus('Temps réel indisponible, mais les messages se rafraîchissent automatiquement toutes les 3 secondes.');
         }
       });
   }
@@ -377,10 +388,11 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
     });
     if (error) {
       console.error(error);
-      chatError.textContent = 'Envoi impossible. Vérifie la structure de la table et les policies.';
+      chatError.textContent = 'Envoi impossible. Vérifie la table ou les policies.';
       return;
     }
     input.value = '';
+    loadMessages();
   }
 
   window.deleteMessage = async function deleteMessage(id) {
@@ -389,7 +401,9 @@ Qu'Allah fasse ce qui est le meilleur pour nous deux.
     if (error) {
       console.error(error);
       document.getElementById('chat-error').textContent = 'Suppression impossible.';
+      return;
     }
+    loadMessages();
   }
 
   function formatDate(value) {
