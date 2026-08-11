@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pour Dalal</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: linear-gradient(135deg, #0b3d2e 0%, #145c48 50%, #0b3d2e 100%);
+    padding: 20px;
+  }
+  .card {
+    background: #fffdf7;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    max-width: 560px;
+    width: 100%;
+    padding: 40px 30px;
+    text-align: center;
+    border: 3px solid #c9a24b;
+  }
+  h1 {
+    color: #0b3d2e;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  p.sub, .hint, #error, #pseudo-error, #chat-error {
+    font-size: 14px;
+  }
+  p.sub {
+    color: #6b6b6b;
+    margin-bottom: 25px;
+  }
+  .hint {
+    color: #6b6b6b;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+  input[type="password"], #pseudo-input, #message-input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #c9a24b;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    outline: none;
+    background: #fffdf7;
+    color: #2b2b2b;
+  }
+  input[type="password"] {
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 8px;
+  }
+  #pseudo-input, #message-input {
+    font-size: 16px;
+    letter-spacing: normal;
+    text-align: left;
+  }
+  input[type="password"]:focus, #pseudo-input:focus, #message-input:focus {
+    border-color: #0b3d2e;
+  }
+  button {
+    background: #0b3d2e;
+    color: #fffdf7;
+    border: none;
+    padding: 12px 22px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover { background: #145c48; }
+  #error, #pseudo-error, #chat-error {
+    color: #b33a3a;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+  #message-container, #chat-login, #chat-container { display: none; }
+  #message-container .letter {
+    text-align: left;
+    white-space: pre-wrap;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #2b2b2b;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-bottom: 20px;
+  }
+  #message-container h1 { text-align: center; }
+  .lock-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+  #chat-messages {
+    text-align: left;
+    height: 320px;
+    overflow-y: auto;
+    border: 2px solid #c9a24b;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    background: #fffef9;
+  }
+  .msg {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    max-width: 84%;
+    word-wrap: break-word;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .msg.dalal {
+    background: #f0e6cf;
+    margin-right: auto;
+    color: #2b2b2b;
+  }
+  .msg.riyad {
+    background: #0b3d2e;
+    color: #fffdf7;
+    margin-left: auto;
+  }
+  .msg .meta {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .delete-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(255,255,255,0.14);
+    color: inherit;
+    border: none;
+    border-radius: 8px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 24px;
+  }
+  #chat-input-area {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+  #message-input {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  #chat-container .hint {
+    margin-bottom: 12px;
+    margin-top: 0;
+  }
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #6b6b6b;
+  }
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b33a3a;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .status-dot.connected {
+    background: #3a8b4a;
+  }
+  #envelope-screen {
+    cursor: pointer;
+  }
+  .envelope {
+    position: relative;
+    width: 220px;
+    height: 150px;
+    margin: 20px auto 10px;
+  }
+  .envelope-body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f0e6cf;
+    border: 3px solid #c9a24b;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    z-index: 1;
+  }
+  .envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-left: 110px solid transparent;
+    border-right: 110px solid transparent;
+    border-top: 90px solid #d8c48a;
+    transform-origin: top;
+    transition: transform 0.6s ease-in-out;
+    z-index: 3;
+  }
+  .envelope.open .envelope-flap {
+    transform: rotateX(180deg);
+  }
+  .envelope-letter {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 170px;
+    height: 100px;
+    background: #fffdf7;
+    border: 2px solid #c9a24b;
+    border-radius: 6px;
+    transform: translateX(-50%) translateY(0);
+    z-index: 2;
+    transition: transform 0.7s ease-in-out 0.3s;
+  }
+  .envelope.open .envelope-letter {
+    transform: translateX(-50%) translateY(-90px);
+  }
+  .envelope-heart {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    z-index: 4;
+  }
+  #message-container.reveal .letter {
+    animation: letterFadeIn 0.9s ease-out forwards;
+    opacity: 0;
+  }
+  #message-container.reveal h1 {
+    animation: letterFadeIn 0.9s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes letterFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .choice-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .choice-btn {
+    padding: 12px 28px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  .choice-yes {
+    background: #0b3d2e;
+    color: #fffdf7;
+  }
+  .choice-yes:hover { background: #145c48; }
+  .choice-no {
+    background: #e8e4da;
+    color: #a3a099;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  code.inline {
+    background: #efe7d6;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  @media (max-width: 640px) {
+    .card { padding: 28px 18px; }
+    #chat-input-area { flex-direction: column; }
+    #chat-input-area button { width: 100%; }
+    .msg { max-width: 92%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="lock-screen">
+  <div class="lock-icon">🔒</div>
+  <h1>Un message t'attend</h1>
+  <p class="sub">Entre le code secret à 4 chiffres pour l'ouvrir</p>
+  <input type="password" id="code" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••">
+  <br>
+  <button onclick="checkCode()">Ouvrir</button>
+  <div id="error"></div>
+</div>
+
+<div class="card" id="confirm-screen-1" style="display:none;">
+  <h1>Es-tu sûre de vouloir continuer ?</h1>
+  <div class="choice-row">
+    <button class="choice-btn choice-yes" onclick="goToConfirm2()">Oui</button>
+    <button class="choice-btn choice-no" disabled>Non</button>
+  </div>
+</div>
+
+<div class="card" id="confirm-screen-2" style="display:none;">
+  <h1>Tu es sûre ?</h1>
+  <div class="choice-row">
+    <button class="choice-btn choice-yes" onclick="goToLetter()">Oui</button>
+    <button class="choice-btn choice-no" disabled>Non</button>
+  </div>
+</div>
+
+<div class="card" id="envelope-screen" style="display:none;" onclick="openEnvelope()">
+  <h1>Une lettre t'attend</h1>
+  <p class="sub">Clique sur l'enveloppe pour l'ouvrir</p>
+  <div class="envelope" id="envelope">
+    <div class="envelope-letter"></div>
+    <div class="envelope-body"></div>
+    <div class="envelope-flap"></div>
+    <div class="envelope-heart">🖤</div>
+  </div>
+</div>
+
+<div class="card" id="message-container">
+  <h1>Pour Dalal 🖤</h1>
+  <div class="letter">Salam 3aleykom Dalal,
+
+Je ne sais pas si c'est trop tard, trop tôt, ou si je devais plus jamais venir te parler. Mais je ressentais le besoin de tout donner une dernière fois pour nous, même si tu as décidé que c'était terminé.
+
+Je sais que j'ai été très problématique dans notre relation, surtout ces deux dernières années. Que ce soit par mes pensées, mes actes ou ma mentalité, je t'ai fait vivre des choses que tu ne méritais pas, et j'en suis sincèrement désolé.
+
+Depuis notre séparation, j'ai énormément pris de recul sur notre histoire, mais aussi sur moi même. Crois le ou pas, beaucoup de ces défauts qui ont tuer la relation petit à petit n'existent presque plus aujourd'hui. Ce changement, je ne l'ai pas fait uniquement pour toi, je l'ai aussi fait pour moi. Avec la mentalité que j'avais, je savais que je n'allais pas aller bien loin dans la vie la vérité.
+
+Je me rends compte aussi que mon discours sur le mariage n'était pas cohérent. Je disais vouloir me marier rapidement, mais je faisais absolument rien pour en être capable. Je comprends que t'as fini par ne plus me croire.
+
+C'est pour ça que, depuis que c'est terminé, j'ai enfin fait ce que j'aurais dû faire depuis longtemps. J'ai travaillé comme un acharné tout les jours, souvent deux taff par jour tout en suivant ma formation à coté. Al hamdoulillah, j'ai réussi mon permis camion et, incha Allah, à partir de septembre je commencerai à travailler comme chauffeur. Et avant tout ça j'ai surtout placer ma confiance en Allah et prier pour nous 2.
+
+J'ai aussi choisi de ne pas partir en vacances cet été, parce que j'ai voulu investir ce temps à construire mon avenir et à préparer les choses sérieusement. Ce n'est pas un sacrifice que je regrette, au contraire, c'était une décision que j'ai prise parce que mes priorités ont changé.
+
+Si je suis venu te parler aujourd'hui, ce n'est pas juste pour te parler de ce que j'ai accompli. C'est parce que je veux venir demander ta main Dalal.
+
+De mon coté j'ai déjà parler de la situation avec mes parents. Ils sont en Égypte la et reviennent demain, incha Allah. On est prêts à venir demander officiellement ta main dès que c'est possible pour vous.
+
+Mais est-ce que toi, tu serais prête à me redonner une chance ? À me refaire confiance et me laisser te prouver que le changement est réel ? Est ce que tu serais prête à reprendre cette histoire sur de nouvelles bases, cette fois dans le halal, sans se cacher de personne et sans répéter les erreurs du passé ?
+
+Si ta réponse est non, je la respecterai. Je voulais simplement que tu saches que malgré tout, mes intentions envers toi sont toujours restées les mêmes et sincères. Je t'ai toujours vue comme la femme avec qui je voulais construire ma vie, et aujourd'hui je fais les efforts pour devenir l'homme capable d'assumer cette responsabilité.
+
+Qu'Allah fasse ce qui est le meilleur pour nous deux.
+
+(Ps: Financièrement tqt pas j'ai mis de coté et je travail encore comme un fou)</div>
+  <button onclick="showChatLogin()">💬 Ouvrir la messagerie</button>
+</div>
+
+<div class="card" id="chat-login">
+  <div class="lock-icon">💬</div>
+  <h1>Messagerie privée</h1>
+  <p class="sub">Entre ton pseudo pour accéder à la discussion</p>
+  <input type="text" id="pseudo-input" maxlength="20" placeholder="Dalal ou Riyad" autocomplete="off">
+  <button onclick="checkPseudo()">Entrer</button>
+  <div id="pseudo-error"></div>
+</div>
+
+<div class="card" id="chat-container">
+  <h1 id="chat-title">Discussion</h1>
+  <p class="hint">Messagerie en temps réel avec Supabase.</p>
+  <div class="status-indicator"><span class="status-dot" id="status-dot"></span><span id="status-text">Connexion...</span></div>
+  <div id="chat-messages"></div>
+  <div id="chat-input-area">
+    <input type="text" id="message-input" placeholder="Écris ton message..." autocomplete="off">
+    <button onclick="sendMessage()">Envoyer</button>
+  </div>
+  <div id="chat-error"></div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const CORRECT_CODE = '1908';
+  const ALLOWED_USERS = ['Dalal', 'Riyad'];
+  let currentUser = null;
+  let supabase = null;
+  let realtimeChannel = null;
+  let pollingInterval = null;
+
+  const SUPABASE_URL = 'https://bjlbmmzeglbhuhhihikq.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_TYAsY6Krtm83Qp8CnwAAbg_wjvyrBSu';
+  const TABLE_NAME = 'private_messages';
+
+  function isSupabaseConfigured() {
+    return SUPABASE_URL !== 'SUPABASE_URL' && SUPABASE_ANON_KEY !== 'SUPABASE_ANON_KEY';
+  }
+
+  function setStatus(message, isConnected = false) {
+    const dot = document.getElementById('status-dot');
+    const text = document.getElementById('status-text');
+    text.textContent = message;
+    if (isConnected) {
+      dot.classList.add('connected');
+    } else {
+      dot.classList.remove('connected');
+    }
+  }
+
+  if (isSupabaseConfigured()) {
+    try {
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      setStatus('En attente de connexion...', false);
+    } catch (error) {
+      console.error(error);
+      setStatus('Non connecté', false);
+    }
+  }
+
+  window.checkCode = function checkCode() {
+    const input = document.getElementById('code').value.trim();
+    const error = document.getElementById('error');
+    if (input === CORRECT_CODE) {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('confirm-screen-1').style.display = 'block';
+      error.textContent = '';
+    } else {
+      error.textContent = 'Code incorrect, réessaye.';
+      document.getElementById('code').value = '';
+    }
+  }
+
+  window.goToConfirm2 = function goToConfirm2() {
+    document.getElementById('confirm-screen-1').style.display = 'none';
+    document.getElementById('confirm-screen-2').style.display = 'block';
+  }
+
+  window.goToLetter = function goToLetter() {
+    document.getElementById('confirm-screen-2').style.display = 'none';
+    document.getElementById('envelope-screen').style.display = 'block';
+  }
+
+  window.openEnvelope = function openEnvelope() {
+    const envelope = document.getElementById('envelope');
+    const screen = document.getElementById('envelope-screen');
+    if (envelope.classList.contains('open')) return;
+    envelope.classList.add('open');
+    setTimeout(() => {
+      screen.style.display = 'none';
+      const container = document.getElementById('message-container');
+      container.style.display = 'block';
+      container.classList.add('reveal');
+    }, 900);
+  }
+
+  window.showChatLogin = function showChatLogin() {
+    document.getElementById('message-container').style.display = 'none';
+    document.getElementById('chat-login').style.display = 'block';
+  }
+
+  window.checkPseudo = function checkPseudo() {
+    const val = document.getElementById('pseudo-input').value.trim();
+    const error = document.getElementById('pseudo-error');
+    const match = ALLOWED_USERS.find(user => user.toLowerCase() === val.toLowerCase());
+    if (!match) {
+      error.textContent = 'Pseudo non autorisé. Seuls Dalal et Riyad peuvent accéder.';
+      return;
+    }
+    currentUser = match;
+    error.textContent = '';
+    document.getElementById('chat-login').style.display = 'none';
+    document.getElementById('chat-container').style.display = 'block';
+    document.getElementById('chat-title').textContent = 'Discussion - connecté en tant que ' + currentUser;
+    startChat();
+  }
+
+
+  async function startChat() {
+    const chatError = document.getElementById('chat-error');
+    chatError.textContent = '';
+    if (!supabase) {
+      chatError.textContent = 'Supabase n\u2019est pas encore configur\u00e9. Ajoute ton URL et ta cl\u00e9 anonyme.';
+      return;
+    }
+    await loadMessages();
+    subscribeToMessages();
+    startPolling();
+  }
+
+  function startPolling() {
+    if (pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(() => {
+      loadMessages();
+    }, 3000);
+  }
+
+  async function loadMessages() {
+    const chatError = document.getElementById('chat-error');
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error(error);
+      chatError.textContent = 'Impossible de charger les messages.';
+      setStatus('Non connecté', false);
+      return;
+    }
+    setStatus('Connecté', true);
+    renderMessages(data || []);
+  }
+
+  function subscribeToMessages() {
+    if (realtimeChannel) {
+      supabase.removeChannel(realtimeChannel);
+    }
+    realtimeChannel = supabase
+      .channel('private-messages-room')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, () => {
+        loadMessages();
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          setStatus('Connecté', true);
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          setStatus('Connecté (actualisation auto)', true);
+        }
+      });
+  }
+
+  window.sendMessage = async function sendMessage() {
+    const input = document.getElementById('message-input');
+    const chatError = document.getElementById('chat-error');
+    const text = input.value.trim();
+    chatError.textContent = '';
+    if (!text || !currentUser) return;
+    if (!supabase) {
+      chatError.textContent = 'Supabase n’est pas configuré.';
+      return;
+    }
+    const { error } = await supabase.from(TABLE_NAME).insert({
+      user_name: currentUser,
+      message_text: text
+    });
+    if (error) {
+      console.error(error);
+      chatError.textContent = 'Envoi impossible. Vérifie la structure de la table et les policies.';
+      return;
+    }
+    input.value = '';
+    loadMessages();
+  }
+
+  window.deleteMessage = async function deleteMessage(id) {
+    if (currentUser !== 'Riyad' || !supabase) return;
+    const { error } = await supabase.from(TABLE_NAME).delete().eq('id', id);
+    if (error) {
+      console.error(error);
+      document.getElementById('chat-error').textContent = 'Suppression impossible.';
+      return;
+    }
+    loadMessages();
+  }
+
+  function formatDate(value) {
+    if (!value) return 'Envoi...';
+    return new Date(value).toLocaleString('fr-FR', {
+      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function renderMessages(messages) {
+    const container = document.getElementById('chat-messages');
+    container.innerHTML = '';
+    messages.forEach(message => {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (message.user_name === 'Riyad' ? 'riyad' : 'dalal');
+      const deleteButton = currentUser === 'Riyad'
+        ? `<button class="delete-btn" onclick="deleteMessage('${message.id}')" aria-label="Supprimer ce message">✕</button>`
+        : '';
+      div.innerHTML = `<span class="meta">${escapeHtml(message.user_name || '')} • ${escapeHtml(formatDate(message.created_at))}</span>${escapeHtml(message.message_text || '')}${deleteButton}`;
+      container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+  }
+
+  document.getElementById('code').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') window.checkCode();
+  });
+
+  document.getElementById('pseudo-input').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') window.checkPseudo();
+  });
+
+  document.getElementById('message-input').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') window.sendMessage();
+  });
+</script>
+
+</body>
+</html>
