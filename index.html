@@ -284,7 +284,8 @@
     border-radius: 6px;
     font-size: 12px;
   }
-  #disclaimer-screen .disclaimer-text {
+  #disclaimer-screen .disclaimer-text,
+  #after-letter-screen .disclaimer-text {
     font-style: italic;
     line-height: 1.6;
     text-align: left;
@@ -348,7 +349,6 @@
 <div class="card" id="message-container">
   <h1>Pour Dalal 🖤</h1>
   <div class="letter">
-
 Salam 3aleykom Dalal,
 
 Je ne sais pas si c’est trop tard, trop tôt, ou si je devais plus jamais venir te parler. Mais je ressentais le besoin de tout donner une dernière fois pour nous, même si tu as décidé que c’était terminé.
@@ -357,7 +357,7 @@ Je sais que j’ai été très problématique dans notre relation, surtout ces d
 
 Depuis notre séparation, j’ai énormément pris de recul sur notre histoire, mais aussi sur moi même. 
 Je sais que ça ne devait pas être facile de supporter quotidiennement quelqu’un comme moi , un garçon qui se couche tard , se lève à limite 20h, qui ne montre aucune ambition et qui en plus ne veut même pas travailler.
-Crois le ou pas, beaucoup de ces défauts qui ont tuer la relation petit à petit n’existent presque plus aujourd’hui. Ce changement, je ne l’ai pas fait uniquement pour toi, je l’ai aussi fait pour moi , j’ai compris que je n’allais pas aller bien loin dans la vie  avec ma manière de vivre et de voir les choses.
+Crois le ou pas, beaucoup de ces défauts qui ont tuer la relation petit à petit n’existent presque plus aujourd’hui. Ce changement, je ne l’ai pas fait uniquement pour toi, je l’ai aussi fait pour moi , j’ai compris que je n’allais pas aller bien loin dans la vie avec ma manière de vivre et de voir les choses.
 
 Je me rends compte aussi que mon discours sur le mariage n’était pas cohérent. Je disais vouloir te marier rapidement, mais je faisais absolument rien pour en être capable. Je comprends que t’as fini par ne plus me croire.
 
@@ -376,6 +376,13 @@ Je voulais que tu saches que malgré tout, mes intentions envers toi sont toujou
 Qu’Allah fasse ce qui est le meilleur pour nous deux.
 
 (Ps: Financièrement tqt pas j’ai mis de coté et je travail encore comme un fou)</div>
+  <button onclick="goToAfterLetter()">Continuer</button>
+</div>
+
+<div class="card" id="after-letter-screen" style="display:none;">
+  <div class="lock-icon">✉️</div>
+  <h1>DISCLAIMER</h1>
+  <p class="disclaimer-text">Rien ne t’oblige à répondre tout de suite , prends le temps qu’il faudra , le site restera toujours accessible.</p>
   <button onclick="showChatLogin()">💬 Ouvrir la messagerie</button>
 </div>
 
@@ -480,8 +487,13 @@ Qu’Allah fasse ce qui est le meilleur pour nous deux.
     }, 900);
   }
 
-  window.showChatLogin = function showChatLogin() {
+  window.goToAfterLetter = function goToAfterLetter() {
     document.getElementById('message-container').style.display = 'none';
+    document.getElementById('after-letter-screen').style.display = 'block';
+  }
+
+  window.showChatLogin = function showChatLogin() {
+    document.getElementById('after-letter-screen').style.display = 'none';
     document.getElementById('chat-login').style.display = 'block';
   }
 
