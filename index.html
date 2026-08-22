@@ -318,6 +318,7 @@
     <button class="choice-btn choice-yes" onclick="goToConfirm2()">Oui</button>
     <button class="choice-btn choice-no" disabled>Non</button>
   </div>
+  <button onclick="goToChatDirect()" style="margin-top: 16px;">💬 Accéder directement à la messagerie</button>
 </div>
 
 <div class="card" id="confirm-screen-2" style="display:none;">
@@ -493,6 +494,11 @@ Qu’Allah fasse ce qui est le meilleur pour nous deux.
 
   window.showChatLogin = function showChatLogin() {
     document.getElementById('after-letter-screen').style.display = 'none';
+    document.getElementById('chat-login').style.display = 'block';
+  }
+
+  window.goToChatDirect = function goToChatDirect() {
+    document.getElementById('confirm-screen-1').style.display = 'none';
     document.getElementById('chat-login').style.display = 'block';
   }
 
